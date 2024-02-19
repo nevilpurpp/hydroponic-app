@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.roborift.hydroponics.app-mergeDebugResources-13:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.roborift.hydroponics.app-mergeDebugResources-15:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "E:\\PROJECTS\\roborift\\hydroponic-app\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "E:\\PROJECTS\\roborift\\hydroponic project\\app\\hydroponic-app\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

@@ -13,6 +13,13 @@ class SensorData {
     required this.waterlvl,
   });
 
+  SensorData.empty()
+      : humidity = 0,
+        nutrients = 0,
+        ph = 0,
+        temperature = 0,
+        waterlvl = 0;
+
   factory SensorData.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
     final sensorData = data['sensor_data'];

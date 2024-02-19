@@ -1,46 +1,30 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import '../models/sensor_data.dart';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import '../constants/utils.dart';
+import '../models/sensor_data.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 class SensorDataProvider extends ChangeNotifier {
   List<SensorData> _sensorData = [];
-  final DatabaseReference _ref = FirebaseDatabase.instance.ref('data/sensor_data');
-
+  
   List<SensorData> get sensorData => _sensorData;
 
-  set sensorData(List<SensorData> newData) {
-    _sensorData = newData;
-    notifyListeners();
+  Future<void> readData() async {
+    final realtimeChannel = Utils().supabase.channel('fish_data');
+  realtimeChannel
+      .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'maintable',
+          callback: (payload) {
+         final newSensorData = SensorData.fromJson(payload.newRecord.length.toString() as Map<String, dynamic>); 
+    _sensorData.add(newSensorData);
+    notifyListeners(); 
+           log('Sensor Data: $newSensorData');  
+          })
+      .subscribe();
+//print(newSensorData);
+notifyListeners(); 
   }
-
-  Stream<List<SensorData>> getSensorDataStream() {
-    return _ref.onValue.map((DatabaseEvent event) {
-      List<SensorData> sensorData = [];
-
-      try {
-        final dataSnapshot = event.snapshot;
-        final Object? data = dataSnapshot.value;
-
-        if (data != null && data is Map<dynamic, dynamic>) {
-          data.forEach((key, value) {
-            if (value is Map<String, dynamic>) {
-              SensorData sensor = SensorData.fromJson(value);
-              sensorData.add(sensor);
-            }
-          });
-        }
-
-        // Update the local sensorData list and notify listeners
-        sensorData = sensorData; // Use the extracted sensor data
-        notifyListeners();
-
-        return sensorData;
-      } catch (error) {
-        print("Error retrieving sensor data: $error");
-        // Handle the error appropriately, e.g., log it, display a user-friendly message, or take corrective actions
-        // You might consider returning an empty list or a list with a placeholder sensor to indicate an error
-        return sensorData; // Returning an empty list in this case
-      }
-    });
-  }
+    
 }
